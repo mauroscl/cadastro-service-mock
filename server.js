@@ -26,6 +26,9 @@ server.post('/token', (req, res) => {
 
 server.post('/CadastroService/', (req, res) => {
     console.log('obtendo dias úteis');
+    res.jsonp(resposta);
+
+    /*
     res.jsonp({
         "Envelope": {
             "Body": {
@@ -40,7 +43,9 @@ server.post('/CadastroService/', (req, res) => {
             }
         }
     });
+    */
 })
+
 
 
 // To handle POST, PUT and PATCH you need to use a body-parser
