@@ -2,6 +2,13 @@ const jsonServer = require('json-server')
 const server = jsonServer.create()
 const router = jsonServer.router('db.json')
 const middlewares = jsonServer.defaults()
+const fs = require('fs');
+
+fs.readFile('dias-uteis.json', (err, data) => {
+    if (err) throw err;
+    const resposta = JSON.parse(data);
+    console.log(resposta);
+});
 
 // Set default middlewares (logger, static, cors and no-cache)
 server.use(middlewares)
@@ -19,6 +26,9 @@ server.post('/token', (req, res) => {
 
 server.post('/CadastroService/', (req, res) => {
     console.log('obtendo dias úteis');
+    res.jsonp(resposta);
+
+    /*
     res.jsonp({
         "Envelope": {
             "Body": {
@@ -33,7 +43,9 @@ server.post('/CadastroService/', (req, res) => {
             }
         }
     });
+    */
 })
+
 
 
 // To handle POST, PUT and PATCH you need to use a body-parser
@@ -49,6 +61,6 @@ server.use((req, res, next) => {
 
 // Use default router
 server.use(router)
-server.listen(3000, () => {
+server.listen(4000, () => {
     console.log('JSON Server is running')
 })
