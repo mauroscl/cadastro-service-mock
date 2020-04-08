@@ -3,12 +3,22 @@ const server = jsonServer.create()
 const router = jsonServer.router('db.json')
 const middlewares = jsonServer.defaults()
 const fs = require('fs');
+let resposta = undefined;
+const bodyParser = require('body-parser')
 
 fs.readFile('dias-uteis.json', (err, data) => {
     if (err) throw err;
-    const resposta = JSON.parse(data);
-    console.log(resposta);
+    resposta = JSON.parse(data);
 });
+
+server.use(
+    bodyParser.urlencoded({
+        extended: true
+    })
+)
+
+server.use(bodyParser.json())
+
 
 // Set default middlewares (logger, static, cors and no-cache)
 server.use(middlewares)
@@ -26,24 +36,28 @@ server.post('/token', (req, res) => {
 
 server.post('/CadastroService/', (req, res) => {
     console.log('obtendo dias úteis');
-    res.jsonp(resposta);
+    console.log(req.body);
 
-    /*
-    res.jsonp({
-        "Envelope": {
-            "Body": {
-                "buscarFeriadoResponse": {
-                    "outBuscarFeriado": {
-                        "dias": {
-                            "dia": "2019-03-27T00:00:00-02:00",
-                            "flagDiaUtil": "S"
+    if (req.body["cad:buscarFeriado"]) {
+        res.jsonp({
+            "Envelope": {
+                "Body": {
+                    "buscarFeriadoResponse": {
+                        "outBuscarFeriado": {
+                            "dias": {
+                                "dia": "2019-03-27T00:00:00-02:00",
+                                "flagDiaUtil": "S"
+                            }
                         }
                     }
                 }
             }
-        }
-    });
-    */
+        });
+
+    } else {
+        res.jsonp(resposta);
+    }
+
 })
 
 
@@ -61,6 +75,6 @@ server.use((req, res, next) => {
 
 // Use default router
 server.use(router)
-server.listen(4000, () => {
+server.listen(3000, () => {
     console.log('JSON Server is running')
 })
