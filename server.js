@@ -3,13 +3,30 @@ const server = jsonServer.create()
 const router = jsonServer.router('db.json')
 const middlewares = jsonServer.defaults()
 const fs = require('fs');
-let resposta = undefined;
-const bodyParser = require('body-parser')
+let resposta = {};
+
+resposta["cad:buscarFeriado"] = {
+    "Envelope": {
+        "Body": {
+            "buscarFeriadoResponse": {
+                "outBuscarFeriado": {
+                    "dias": {
+                        "dia": "2019-03-27T00:00:00-02:00",
+                        "flagDiaUtil": "S"
+                    }
+                }
+            }
+        }
+    }
+};
+
 
 fs.readFile('dias-uteis.json', (err, data) => {
     if (err) throw err;
-    resposta = JSON.parse(data);
+    resposta["cad:testarDiasUteis"] = JSON.parse(data);
 });
+
+const bodyParser = require('body-parser')
 
 server.use(
     bodyParser.urlencoded({
@@ -38,26 +55,7 @@ server.post('/CadastroService/', (req, res) => {
     console.log('obtendo dias úteis');
     console.log(req.body);
 
-    if (req.body["cad:buscarFeriado"]) {
-        res.jsonp({
-            "Envelope": {
-                "Body": {
-                    "buscarFeriadoResponse": {
-                        "outBuscarFeriado": {
-                            "dias": {
-                                "dia": "2019-03-27T00:00:00-02:00",
-                                "flagDiaUtil": "S"
-                            }
-                        }
-                    }
-                }
-            }
-        });
-
-    } else {
-        res.jsonp(resposta);
-    }
-
+    res.jsonp(resposta[Object.keys(req.body)[0]]);
 })
 
 
